@@ -28489,7 +28489,105 @@ var _Context = require("./components/Context");
 var _connect = _interopRequireDefault(require("./connect/connect"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./components/Provider":"../node_modules/react-redux/es/components/Provider.js","./components/connectAdvanced":"../node_modules/react-redux/es/components/connectAdvanced.js","./components/Context":"../node_modules/react-redux/es/components/Context.js","./connect/connect":"../node_modules/react-redux/es/connect/connect.js"}],"components/app.js":[function(require,module,exports) {
+},{"./components/Provider":"../node_modules/react-redux/es/components/Provider.js","./components/connectAdvanced":"../node_modules/react-redux/es/components/connectAdvanced.js","./components/Context":"../node_modules/react-redux/es/components/Context.js","./connect/connect":"../node_modules/react-redux/es/connect/connect.js"}],"actions/types.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.SET_INSTRUCTIONS_EXPANDED = exports.SET_GAME_STARTED = void 0;
+var SET_GAME_STARTED = 'SET_GAME_STARTED';
+exports.SET_GAME_STARTED = SET_GAME_STARTED;
+var SET_INSTRUCTIONS_EXPANDED = 'SET_INSTRUCTIONS_EXPANDED';
+exports.SET_INSTRUCTIONS_EXPANDED = SET_INSTRUCTIONS_EXPANDED;
+},{}],"actions/settings.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.collapseInstructions = exports.expandInstructions = exports.cancelGame = exports.startGame = void 0;
+
+var _types = require("./types");
+
+var startGame = function startGame() {
+  return {
+    type: _types.SET_GAME_STARTED,
+    gameStarted: true
+  };
+};
+
+exports.startGame = startGame;
+
+var cancelGame = function cancelGame() {
+  return {
+    type: _types.SET_GAME_STARTED,
+    gameStarted: false
+  };
+};
+
+exports.cancelGame = cancelGame;
+
+var expandInstructions = function expandInstructions() {
+  return {
+    type: _types.SET_INSTRUCTIONS_EXPANDED,
+    instructionsExpanded: true
+  };
+};
+
+exports.expandInstructions = expandInstructions;
+
+var collapseInstructions = function collapseInstructions() {
+  return {
+    type: _types.SET_INSTRUCTIONS_EXPANDED,
+    instructionsExpanded: false
+  };
+};
+
+exports.collapseInstructions = collapseInstructions;
+},{"./types":"actions/types.js"}],"components/Instructions.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+
+var _reactRedux = require("react-redux");
+
+var _settings = require("../actions/settings");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Instructions = function Instructions(props) {
+  var instructionsExpanded = props.instructionsExpanded,
+      expandInstructions = props.expandInstructions,
+      collapseInstructions = props.collapseInstructions;
+
+  if (instructionsExpanded) {
+    return _react.default.createElement("div", null, _react.default.createElement("h3", null, "Instructions"), _react.default.createElement("p", null, "Welcome to Evens or Odds. The game goes like this"), _react.default.createElement("p", null, "The deck is shuffled. Then choose: will the next card be even or odd?"), _react.default.createElement("p", null, "Make a choice on every draw, and see how many you get right!"), _react.default.createElement("p", null, "(Face cards don't count)"), _react.default.createElement("br", null), _react.default.createElement("button", {
+      onClick: collapseInstructions
+    }, "Show Less"));
+  }
+
+  return _react.default.createElement("div", null, _react.default.createElement("h3", null, "Instructions"), _react.default.createElement("p", null, "Welcome to Evens or Odds. The game goes like this..."), _react.default.createElement("button", {
+    onClick: expandInstructions
+  }, "Read More"));
+};
+
+var _default = (0, _reactRedux.connect)(function (state) {
+  return {
+    instructionsExpanded: state.instructionsExpanded
+  };
+}, {
+  expandInstructions: _settings.expandInstructions,
+  collapseInstructions: _settings.collapseInstructions
+})(Instructions);
+
+exports.default = _default;
+},{"react":"../node_modules/react/index.js","react-redux":"../node_modules/react-redux/es/index.js","../actions/settings":"actions/settings.js"}],"components/app.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -28500,6 +28598,12 @@ exports.default = void 0;
 var _react = _interopRequireWildcard(require("react"));
 
 var _reactRedux = require("react-redux");
+
+var _settings = require("../actions/settings");
+
+var _Instructions = _interopRequireDefault(require("./Instructions"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
@@ -28536,7 +28640,11 @@ function (_Component) {
     key: "render",
     value: function render() {
       console.log(this);
-      return _react.default.createElement("div", null, "React App");
+      return _react.default.createElement("div", null, _react.default.createElement("h2", null, "\u2660\uFE0F \u2764 Evens or Odds \u2663\uFE0F \u2666"), this.props.gameStarted ? _react.default.createElement("div", null, _react.default.createElement("h3", null, "The game is on!"), _react.default.createElement("br", null), _react.default.createElement("button", {
+        onClick: this.props.cancelGame
+      }, "Cancel Game ")) : _react.default.createElement("div", null, _react.default.createElement("h3", null, "A new game awaits"), _react.default.createElement("br", null), _react.default.createElement("button", {
+        onClick: this.props.startGame
+      }, "Start Game"), _react.default.createElement("hr", null), _react.default.createElement(_Instructions.default, null)));
     }
   }]);
 
@@ -28546,27 +28654,27 @@ function (_Component) {
 var mapStateToProps = function mapStateToProps(state) {
   console.log('state', state);
   return {
-    gamestarted: state.gamestarted
+    gameStarted: state.gameStarted
   };
 };
 
-var componentConnector = (0, _reactRedux.connect)(mapStateToProps);
+var mapDispactchToProps = function mapDispactchToProps(dispatch) {
+  return {
+    startGame: function startGame() {
+      return dispatch((0, _settings.startGame)());
+    },
+    cancelGame: function cancelGame() {
+      return dispatch((0, _settings.cancelGame)());
+    }
+  };
+};
+
+var componentConnector = (0, _reactRedux.connect)(mapStateToProps, mapDispactchToProps);
 
 var _default = componentConnector(App);
 
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","react-redux":"../node_modules/react-redux/es/index.js"}],"actions/types.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.SET_INSTRUCTIONS_EXPANDED = exports.SET_GAME_STARTED = void 0;
-var SET_GAME_STARTED = 'SET_GAME_STARTED';
-exports.SET_GAME_STARTED = SET_GAME_STARTED;
-var SET_INSTRUCTIONS_EXPANDED = 'SET_INSTRUCTIONS_EXPANDED';
-exports.SET_INSTRUCTIONS_EXPANDED = SET_INSTRUCTIONS_EXPANDED;
-},{}],"reducers/index.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-redux":"../node_modules/react-redux/es/index.js","../actions/settings":"actions/settings.js","./Instructions":"components/Instructions.js"}],"reducers/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -28593,9 +28701,9 @@ var rootReducer = function rootReducer() {
 
   switch (action.type) {
     case _types.SET_GAME_STARTED:
-      return _objectSpread({
+      return _objectSpread({}, state, {
         gameStarted: action.gameStarted
-      }, state);
+      });
 
     case _types.SET_INSTRUCTIONS_EXPANDED:
       return _objectSpread({}, state, {
