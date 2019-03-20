@@ -26555,8 +26555,78 @@ require("./index.css");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var store = (0, _redux.createStore)();
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var DEFAULT_SETTINGS = {
+  gameStarted: false,
+  instructionsExpanded: false
+};
+var SET_GAME_STARTED = 'SET_GAME_STARTED';
+var SET_INSTRUCTIONS_EXPANDED = 'SET_INSTRUCTIONS_EXPANDED';
+
+var rootReducer = function rootReducer() {
+  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : DEFAULT_SETTINGS;
+  var action = arguments.length > 1 ? arguments[1] : undefined;
+  console.log('state', state);
+  console.log('action', action);
+
+  switch (action.type) {
+    case SET_GAME_STARTED:
+      return _objectSpread({
+        gameStarted: action.gameStarted
+      }, state);
+
+    case SET_INSTRUCTIONS_EXPANDED:
+      return _objectSpread({}, state, {
+        instructionsExpanded: action.instructionsExpanded
+      });
+
+    default:
+      return state;
+  }
+};
+
+var store = (0, _redux.createStore)(rootReducer);
 console.log(store);
+console.log('store.getState()', store.getState());
+store.subscribe(function () {
+  return console.log('store.getState()', store.getState());
+});
+
+var startGame = function startGame() {
+  return {
+    type: SET_GAME_STARTED,
+    gameStarted: true
+  };
+};
+
+var cancelGame = function cancelGame() {
+  return {
+    type: SET_GAME_STARTED,
+    gameStarted: false
+  };
+};
+
+var expandInstructions = function expandInstructions() {
+  return {
+    type: SET_INSTRUCTIONS_EXPANDED,
+    instructionsExpanded: true
+  };
+};
+
+var cancelInstructions = function cancelInstructions() {
+  return {
+    type: SET_INSTRUCTIONS_EXPANDED,
+    instructionsExpanded: false
+  };
+};
+
+store.dispatch(startGame());
+store.dispatch(expandInstructions());
+store.dispatch(cancelGame());
+store.dispatch(cancelInstructions());
 
 _reactDom.default.render(_react.default.createElement(_app.default, null), document.getElementById('root'));
 },{"react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","redux":"../node_modules/redux/es/redux.js","./components/app":"components/app.js","./index.css":"index.css"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
