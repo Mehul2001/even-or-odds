@@ -28489,7 +28489,35 @@ var _Context = require("./components/Context");
 var _connect = _interopRequireDefault(require("./connect/connect"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./components/Provider":"../node_modules/react-redux/es/components/Provider.js","./components/connectAdvanced":"../node_modules/react-redux/es/components/connectAdvanced.js","./components/Context":"../node_modules/react-redux/es/components/Context.js","./connect/connect":"../node_modules/react-redux/es/connect/connect.js"}],"actions/types.js":[function(require,module,exports) {
+},{"./components/Provider":"../node_modules/react-redux/es/components/Provider.js","./components/connectAdvanced":"../node_modules/react-redux/es/components/connectAdvanced.js","./components/Context":"../node_modules/react-redux/es/components/Context.js","./connect/connect":"../node_modules/react-redux/es/connect/connect.js"}],"../node_modules/redux-thunk/es/index.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+function createThunkMiddleware(extraArgument) {
+  return function (_ref) {
+    var dispatch = _ref.dispatch,
+        getState = _ref.getState;
+    return function (next) {
+      return function (action) {
+        if (typeof action === 'function') {
+          return action(dispatch, getState, extraArgument);
+        }
+
+        return next(action);
+      };
+    };
+  };
+}
+
+var thunk = createThunkMiddleware();
+thunk.withExtraArgument = createThunkMiddleware;
+var _default = thunk;
+exports.default = _default;
+},{}],"actions/types.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -28595,7 +28623,7 @@ exports.default = _default;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.fetchDeckResult = void 0;
+exports.fetchNewDeck = exports.fetchDeckResult = void 0;
 
 var _types = require("./types");
 
@@ -28610,6 +28638,18 @@ var fetchDeckResult = function fetchDeckResult(deckJson) {
 };
 
 exports.fetchDeckResult = fetchDeckResult;
+
+var fetchNewDeck = function fetchNewDeck() {
+  return function (dispatch) {
+    return fetch('https://deck-of-cards-api-wrapper.appspot.com/deck/new/shuffle').then(function (response) {
+      return response.json();
+    }).then(function (json) {
+      dispatch(fetchDeckResult(json));
+    });
+  };
+};
+
+exports.fetchNewDeck = fetchNewDeck;
 },{"./types":"actions/types.js"}],"components/app.js":[function(require,module,exports) {
 "use strict";
 
@@ -28673,11 +28713,7 @@ function (_Component) {
     _defineProperty(_assertThisInitialized(_this), "startGame", function () {
       _this.props.startGame();
 
-      fetch('https://deck-of-cards-api-wrapper.appspot.com/deck/new/shuffle').then(function (response) {
-        return response.json();
-      }).then(function (json) {
-        _this.props.fetchDeckResult(json);
-      });
+      _this.props.fetchNewDeck();
     });
 
     return _this;
@@ -28703,23 +28739,20 @@ var mapStateToProps = function mapStateToProps(state) {
   return {
     gameStarted: state.gameStarted
   };
-};
+}; // const mapDispactchToProps = dispatch => {
+//     return {
+//         startGame: () => dispatch(startGame()),
+//         cancelGame: () => dispatch(cancelGame()),
+//         fetchNewDeck: () => dispatch(fetchNewDeck())
+//     };
+// }
 
-var mapDispactchToProps = function mapDispactchToProps(dispatch) {
-  return {
-    startGame: function startGame() {
-      return dispatch((0, _settings.startGame)());
-    },
-    cancelGame: function cancelGame() {
-      return dispatch((0, _settings.cancelGame)());
-    },
-    fetchDeckResult: function fetchDeckResult(deckJson) {
-      return dispatch((0, _deck.fetchDeckResult)(deckJson));
-    }
-  };
-};
 
-var componentConnector = (0, _reactRedux.connect)(mapStateToProps, mapDispactchToProps);
+var componentConnector = (0, _reactRedux.connect)(mapStateToProps, {
+  startGame: _settings.startGame,
+  cancelGame: _settings.cancelGame,
+  fetchNewDeck: _deck.fetchNewDeck
+});
 
 var _default = componentConnector(App);
 
@@ -28862,6 +28895,8 @@ var _redux = require("redux");
 
 var _reactRedux = require("react-redux");
 
+var _reduxThunk = _interopRequireDefault(require("redux-thunk"));
+
 var _app = _interopRequireDefault(require("./components/app"));
 
 var _reducers = _interopRequireDefault(require("./reducers"));
@@ -28870,7 +28905,7 @@ require("./index.css");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var store = (0, _redux.createStore)(_reducers.default);
+var store = (0, _redux.createStore)(_reducers.default, (0, _redux.applyMiddleware)(_reduxThunk.default));
 console.log(store);
 console.log('store.getState()', store.getState());
 store.subscribe(function () {
@@ -28880,7 +28915,7 @@ store.subscribe(function () {
 _reactDom.default.render(_react.default.createElement(_reactRedux.Provider, {
   store: store
 }, _react.default.createElement(_app.default, null)), document.getElementById('root'));
-},{"react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","redux":"../node_modules/redux/es/redux.js","react-redux":"../node_modules/react-redux/es/index.js","./components/app":"components/app.js","./reducers":"reducers/index.js","./index.css":"index.css"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","redux":"../node_modules/redux/es/redux.js","react-redux":"../node_modules/react-redux/es/index.js","redux-thunk":"../node_modules/redux-thunk/es/index.js","./components/app":"components/app.js","./reducers":"reducers/index.js","./index.css":"index.css"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -28908,7 +28943,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60847" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61549" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
