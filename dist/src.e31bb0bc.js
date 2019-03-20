@@ -28495,11 +28495,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.SET_INSTRUCTIONS_EXPANDED = exports.SET_GAME_STARTED = void 0;
+exports.FETCH_DECK_RESULT = exports.SET_INSTRUCTIONS_EXPANDED = exports.SET_GAME_STARTED = void 0;
 var SET_GAME_STARTED = 'SET_GAME_STARTED';
 exports.SET_GAME_STARTED = SET_GAME_STARTED;
 var SET_INSTRUCTIONS_EXPANDED = 'SET_INSTRUCTIONS_EXPANDED';
 exports.SET_INSTRUCTIONS_EXPANDED = SET_INSTRUCTIONS_EXPANDED;
+var FETCH_DECK_RESULT = 'FETCH_DECK_RESULT';
+exports.FETCH_DECK_RESULT = FETCH_DECK_RESULT;
 },{}],"actions/settings.js":[function(require,module,exports) {
 "use strict";
 
@@ -28587,7 +28589,28 @@ var _default = (0, _reactRedux.connect)(function (state) {
 })(Instructions);
 
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","react-redux":"../node_modules/react-redux/es/index.js","../actions/settings":"actions/settings.js"}],"components/app.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-redux":"../node_modules/react-redux/es/index.js","../actions/settings":"actions/settings.js"}],"actions/deck.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.fetchDeckResult = void 0;
+
+var _types = require("./types");
+
+var fetchDeckResult = function fetchDeckResult(deckJson) {
+  var remaining = deckJson.remaining,
+      deck_id = deckJson.deck_id;
+  return {
+    type: _types.FETCH_DECK_RESULT,
+    remaining: remaining,
+    deck_id: deck_id
+  };
+};
+
+exports.fetchDeckResult = fetchDeckResult;
+},{"./types":"actions/types.js"}],"components/app.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -28603,6 +28626,8 @@ var _settings = require("../actions/settings");
 
 var _Instructions = _interopRequireDefault(require("./Instructions"));
 
+var _deck = require("../actions/deck");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
@@ -28617,13 +28642,15 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 var App =
 /*#__PURE__*/
@@ -28631,9 +28658,29 @@ function (_Component) {
   _inherits(App, _Component);
 
   function App() {
+    var _getPrototypeOf2;
+
+    var _this;
+
     _classCallCheck(this, App);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(App).apply(this, arguments));
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(App)).call.apply(_getPrototypeOf2, [this].concat(args)));
+
+    _defineProperty(_assertThisInitialized(_this), "startGame", function () {
+      _this.props.startGame();
+
+      fetch('https://deck-of-cards-api-wrapper.appspot.com/deck/new/shuffle').then(function (response) {
+        return response.json();
+      }).then(function (json) {
+        _this.props.fetchDeckResult(json);
+      });
+    });
+
+    return _this;
   }
 
   _createClass(App, [{
@@ -28643,7 +28690,7 @@ function (_Component) {
       return _react.default.createElement("div", null, _react.default.createElement("h2", null, "\u2660\uFE0F \u2764 Evens or Odds \u2663\uFE0F \u2666"), this.props.gameStarted ? _react.default.createElement("div", null, _react.default.createElement("h3", null, "The game is on!"), _react.default.createElement("br", null), _react.default.createElement("button", {
         onClick: this.props.cancelGame
       }, "Cancel Game ")) : _react.default.createElement("div", null, _react.default.createElement("h3", null, "A new game awaits"), _react.default.createElement("br", null), _react.default.createElement("button", {
-        onClick: this.props.startGame
+        onClick: this.startGame
       }, "Start Game"), _react.default.createElement("hr", null), _react.default.createElement(_Instructions.default, null)));
     }
   }]);
@@ -28665,6 +28712,9 @@ var mapDispactchToProps = function mapDispactchToProps(dispatch) {
     },
     cancelGame: function cancelGame() {
       return dispatch((0, _settings.cancelGame)());
+    },
+    fetchDeckResult: function fetchDeckResult(deckJson) {
+      return dispatch((0, _deck.fetchDeckResult)(deckJson));
     }
   };
 };
@@ -28674,7 +28724,9 @@ var componentConnector = (0, _reactRedux.connect)(mapStateToProps, mapDispactchT
 var _default = componentConnector(App);
 
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","react-redux":"../node_modules/react-redux/es/index.js","../actions/settings":"actions/settings.js","./Instructions":"components/Instructions.js"}],"reducers/index.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-redux":"../node_modules/react-redux/es/index.js","../actions/settings":"actions/settings.js","./Instructions":"components/Instructions.js","../actions/deck":"actions/deck.js"}],"../node_modules/parcel-bundler/src/builtins/_empty.js":[function(require,module,exports) {
+
+},{}],"reducers/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -28683,6 +28735,8 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 
 var _types = require("../actions/types");
+
+var _fs = require("fs");
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
@@ -28710,6 +28764,14 @@ var rootReducer = function rootReducer() {
         instructionsExpanded: action.instructionsExpanded
       });
 
+    case _types.FETCH_DECK_RESULT:
+      var remaining = action.remaining,
+          deck_id = action.deck_id;
+      return _objectSpread({}, state, {
+        remaining: remaining,
+        deck_id: deck_id
+      });
+
     default:
       return state;
   }
@@ -28717,7 +28779,7 @@ var rootReducer = function rootReducer() {
 
 var _default = rootReducer;
 exports.default = _default;
-},{"../actions/types":"actions/types.js"}],"../node_modules/parcel-bundler/src/builtins/bundle-url.js":[function(require,module,exports) {
+},{"../actions/types":"actions/types.js","fs":"../node_modules/parcel-bundler/src/builtins/_empty.js"}],"../node_modules/parcel-bundler/src/builtins/bundle-url.js":[function(require,module,exports) {
 var bundleURL = null;
 
 function getBundleURLCached() {
