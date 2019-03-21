@@ -9,11 +9,13 @@ const DrawCard = ({ deck_id, fetchDrawCard }) => {
         </div>
     )
 }
+
 const mapDispatchToProps = dispatch => {
     return {
         fetchDrawCard: deck_id => () => dispatch(fetchDrawCard(deck_id))
     };
 }
+
 export default connect(
     ({ deck: { deck_id } }) => ({ deck_id }),
     mapDispatchToProps

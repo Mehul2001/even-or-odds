@@ -10,5 +10,4 @@ export const DECK = {
 export const DECK_DRAW = {
     FETCH_SUCCESS: 'DECK_DRAW_FETCH_SUCCESS',
     FETCH_ERROR: 'DECK_DRAW_FETCH_SUCCESS'
-}
-
+};

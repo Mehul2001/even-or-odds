@@ -5,7 +5,6 @@ const DEFAULT_GAME_STATE = { guess: '', correctGuesses: 0 };
 const EVENS = ['2', '4', '6', '8', '0'];
 const ODDS = ['ACE', '3', '5', '7', '9'];
 
-
 const gameStateReducer = (state = DEFAULT_GAME_STATE, action) => {
     switch (action.type) {
         case SET_GUESS:
@@ -20,10 +19,10 @@ const gameStateReducer = (state = DEFAULT_GAME_STATE, action) => {
                 (guess === 'even' && EVENS.includes(value)) ||
                 (guess === 'odd' && ODDS.includes(value))
             ) {
-                return { ...state, correctGuesses: correctGuesses + 1 }
+                return { ...state, correctGuesses: correctGuesses + 1 };
             }
-            return state;
 
+            return state;
         default:
             return state;
     }

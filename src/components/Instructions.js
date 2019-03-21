@@ -9,24 +9,24 @@ const Instructions = props => {
         return (
             <div>
                 <h3>Instructions</h3>
-                <p>Welcome to Evens or Odds. The game goes like this</p>
+                <p>Welcome to evens or odds. The game goes like this</p>
                 <p>The deck is shuffled. Then choose: will the next card be even or odd?</p>
                 <p>Make a choice on every draw, and see how many you get right!</p>
                 <p>(Face cards don't count)</p>
                 <br />
-                <button onClick={collapseInstructions}>Show Less</button>
+                <button onClick={collapseInstructions}>Show less</button>
             </div>
         );
     }
-
     return (
         <div>
             <h3>Instructions</h3>
-            <p>Welcome to Evens or Odds. The game goes like this...</p>
-            <button onClick={expandInstructions}>Read More</button>
+            <p>Welcome to evens or odds. The game goes like this...</p>
+            <button onClick={expandInstructions}>Read more</button>
         </div>
     )
 }
-
-export default connect(state => ({ instructionsExpanded: state.settings.instructionsExpanded }),
-    { expandInstructions, collapseInstructions })(Instructions);
+export default connect(
+    state => ({ instructionsExpanded: state.settings.instructionsExpanded }),
+    { expandInstructions, collapseInstructions }
+)(Instructions);
